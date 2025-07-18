@@ -116,7 +116,7 @@ footer {
     }
 
     .portfolio {
-        display: none;
+        display: none !important;
     }
 
     #terminal {
@@ -158,7 +158,7 @@ footer {
 .portfolio {
     display: flex;
     justify-content: center;
-    align-items: anchor-center;
+    align-items: center;
 }
 
 .card-container {
@@ -178,6 +178,8 @@ footer {
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+    max-width: 316px;
+    max-height: 468px;
 }
 
 .front {
