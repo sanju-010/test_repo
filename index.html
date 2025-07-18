@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web CLI</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Name goes here</h1>
+    <span>sub wordsa here</span>
+  </header>
+  <div class="portfolio-wrap">
+  <div class="portfolio">
+    <div class="card-container" id="card">
+      <div class="card-face front">
+        <img src="https://i.pravatar.cc/150?img=7" alt="Profile" />
+        <h2>Jane Doe</h2>
+        <p>Web Designer</p>
+      </div>
+      <div class="card-face back">
+        <p>Contact: jane@example.com</p>
+      </div>
+    </div>
+  </div>
+    <div id="terminal"></div>
+  </div>
+  <footer>
+    <span>sanju@portfolio:~$</span>
+    <span></span>
+  </footer>
+<script src="app.js"></script>
+
+  <script>
+    const card = document.getElementById("card");
+    let flipped = false;
+
+    card.addEventListener("click", () => {
+      flipped = !flipped;
+      gsap.to(card, {
+        duration: .1,
+        rotationY: flipped ? 180 : 0,
+        ease: "power2.inOut"
+      });
+    });
+  </script>
+
+</body>
+
+</html>
