@@ -6,7 +6,8 @@ let shouldAutoScroll = true;
 
 // Detect manual scroll
 terminal.addEventListener("scroll", () => {
-  const nearBottom = terminal.scrollTop + terminal.clientHeight >= terminal.scrollHeight - 10;
+  const nearBottom =
+    terminal.scrollTop + terminal.clientHeight >= terminal.scrollHeight - 10;
   shouldAutoScroll = nearBottom;
 });
 
@@ -20,57 +21,50 @@ const commands = {
 - contact        : How to reach me
 - education      : My educational background
 - certifications : View my certifications
-- leadership     : Leadership and community involvement
-- sports         : My sports involvement
 - clear          : Clear the terminal`,
-  
-  about: "Hi, I'm Sanju. This is a simulated command-line portfolio built using HTML + JavaScript. Type 'help' to see what you can explore.",
 
-  projects: `Completed Projects:
-1. Expense Tracker PWA - A personal finance tracker with offline support and chart analysis.
-2. Temple Management System - A full-stack .NET-based system for managing temple activities.
-3. Game Portal - A website featuring simple JavaScript games like Snake and Tic-Tac-Toe.
-4. Smart House Planner - An Angular app to design and simulate smart home layouts.
-(More projects coming soon...)`,
+  about:
+    "Hi, I'm Sanju Santhosh, a software engineer with 1 year of experience in full-stack web development. I specialize in WordPress, .NET, and Angular development. Type 'help' to explore more about my work and skills.",
+
+  projects: `Projects:
+    1. Greenads Global - A responsive business website developed with WordPress and Elementor.
+       Live: <a href="https://www.greenadsglobal.com/" target="_blank">greenadsglobal.com</a>
+    2. SPL Components - Custom WordPress development for a UK-based component supplier.
+       Live: <a href="https://www.splcomponentsltd.co.uk/" target="_blank">splcomponentsltd.co.uk</a>`,
 
   skills: `Technical Skills:
-- Languages   : JavaScript, C#, SQL, HTML, CSS
-- Frameworks  : .NET Core, Angular, Ionic, Flutter (basic)
-- Tools       : Docker, Git, MySQL, Firebase
-- Other       : PWA, REST APIs, RDLC Reports`,
+- Languages       : JavaScript, C#, Python, PHP, HTML, CSS, LESS
+- Frameworks      : .NET Core, ASP.NET, MVC, Django, Angular, WebForms
+- CMS & Tools     : WordPress, WooCommerce, Elementor, GitHub
+- Databases       : MySQL
+- Other           : REST APIs, Payment Gateway Integration, SEO, Responsive Design`,
 
   experience: `Work Experience:
-- Backend Developer Intern at XYZ Pvt Ltd (2023 - 2024)
-  Worked on RESTful APIs, billing modules, and database design.`,
+1. DotNet Developer - Astrins Technologies (03/2025 – Present)
+   - Backend & API development using .NET Core, ASP.NET, and MVC.
+   - Frontend using Angular and WebForms.
+   - Integrated payment gateways and third-party APIs.
+
+2. Software Engineer - Yatnam Technologies (11/2023 – 12/2024)
+   - Built websites and eCommerce stores using WordPress, WooCommerce, and Elementor.
+   - Developed backend systems using Python and Django.
+   - Focused on SEO, speed optimization, and responsive design.`,
 
   contact: `You can reach me at:
-- Email   : sanju@example.com
-- GitHub  : github.com/sanjudev
-- LinkedIn: linkedin.com/in/sanju`,
+   - Phone    : <a href="tel:8606884750" target="_blank">8606884750</a>
+   - Email    : <a href="mailto:sanjusanthosh61@gmail.com" target="_blank">sanjusanthosh61@gmail.com</a>
+   - LinkedIn : <a href="https://www.linkedin.com/in/sanju-santhosh" target="_blank">linkedin.com/in/sanju-santhosh</a>
+   - Location : Aluva, Kerala`,
 
-  education: `Educational Background:
-- Bachelor of Computer Applications (BCA)
-- Master of Computer Applications (MCA)`,
+  education: `Education:
+- MCA – Union Christian College, Aluva (2021 – 2023)
+- BCA – Jai Bharath Arts and Science College, Vegola (2018 – 2021)`,
 
   certifications: `Certifications:
-- Full Stack Development with .NET (Udemy)
-- Angular & Firebase Bootcamp (freeCodeCamp)
-- Database Management with MySQL (Coursera)`,
+(Currently not listed, but you can add them here if available)`,
 
-  leadership: `Leadership & Community:
-- Headed college coding club for 2 years
-- Organized technical fests and inter-college hackathons
-- Mentored juniors in full-stack web development`,
-
-  sports: `Sports:
-- Cricket: Represented the district team in several state-level tournaments.
-  Played as an all-rounder and helped the team win multiple matches.`,
-
-  time: () => `Current Time: ${new Date().toLocaleTimeString()}`,
-
-  clear: "__CLEAR__"
+  clear: "__CLEAR__",
 };
-
 
 function createInputLine() {
   const line = document.createElement("div");
@@ -128,16 +122,15 @@ function createInputLine() {
 
   // terminal click on focus
   terminal.addEventListener("click", () => {
-  // Get all input elements inside terminal
-  const inputs = terminal.querySelectorAll(".input");
-  if (inputs.length > 0) {
-    const lastInput = inputs[inputs.length - 1];
-    if (!lastInput.disabled) {
-      lastInput.focus();
+    // Get all input elements inside terminal
+    const inputs = terminal.querySelectorAll(".input");
+    if (inputs.length > 0) {
+      const lastInput = inputs[inputs.length - 1];
+      if (!lastInput.disabled) {
+        lastInput.focus();
+      }
     }
-  }
-});
-
+  });
 }
 
 function handleCommand(cmd) {
@@ -150,9 +143,14 @@ function handleCommand(cmd) {
   const result = commands[lower];
 
   if (!result) {
-    typeOutput(`Command not found: ${cmd}`, () => createInputLine());
+    const suggestion = getClosestCommand(cmd);
+    const msg = suggestion
+      ? `Command not found: ${cmd}. Did you mean: ${suggestion}?`
+      : `Command not found: ${cmd}`;
+    typeOutput(msg, () => createInputLine());
     return;
   }
+  
 
   if (typeof result === "function") {
     typeOutput(result(), () => createInputLine());
@@ -164,35 +162,93 @@ function handleCommand(cmd) {
   }
 }
 
-
-function typeOutput(text, callback, speed = 10) {
-  // ⬇️ Auto scroll to bottom 2
-  terminal.scrollTop = terminal.scrollHeight;
+function typeOutput(html, callback, speed = 10) {
   const out = document.createElement("div");
   out.className = "output-line";
   terminal.appendChild(out);
 
-  let i = 0;
-  function typeNext() {
-    if (i < text.length) {
-      out.textContent += text.charAt(i);
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
 
-      // ⬇️ Auto scroll to bottom 3
-      // terminal.scrollTop = terminal.scrollHeight;
-      if (shouldAutoScroll) {
-        terminal.scrollTop = terminal.scrollHeight;
+  let nodes = Array.from(temp.childNodes);
+
+  function typeNode(nodeIndex = 0) {
+    if (nodeIndex >= nodes.length) {
+      callback && callback();
+      return;
+    }
+
+    const node = nodes[nodeIndex];
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.textContent;
+      let i = 0;
+
+      function typeChar() {
+        if (i < text.length) {
+          out.appendChild(document.createTextNode(text.charAt(i)));
+          if (shouldAutoScroll) terminal.scrollTop = terminal.scrollHeight;
+          i++;
+          setTimeout(typeChar, speed);
+        } else {
+          typeNode(nodeIndex + 1);
+        }
       }
 
-      i++;
-      setTimeout(typeNext, speed);
-    } else {
-      out.textContent += "\n";
-      callback && callback();
+      typeChar();
+
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const clone = node.cloneNode(false); // Copy tag without children
+      out.appendChild(clone);
+
+      // Recursively type children into the cloned tag
+      const childNodes = Array.from(node.childNodes);
+      const childOut = clone;
+
+      function typeChild(childIndex = 0) {
+        if (childIndex >= childNodes.length) {
+          typeNode(nodeIndex + 1);
+          return;
+        }
+
+        const child = childNodes[childIndex];
+
+        if (child.nodeType === Node.TEXT_NODE) {
+          let text = child.textContent;
+          let i = 0;
+
+          function typeChar() {
+            if (i < text.length) {
+              childOut.appendChild(document.createTextNode(text.charAt(i)));
+              if (shouldAutoScroll) terminal.scrollTop = terminal.scrollHeight;
+              i++;
+              setTimeout(typeChar, speed);
+            } else {
+              typeChild(childIndex + 1);
+            }
+          }
+
+          typeChar();
+
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          const innerClone = child.cloneNode(false);
+          childOut.appendChild(innerClone);
+
+          // Recursively handle nested elements
+          const nested = Array.from(child.childNodes);
+          nodes.splice(nodeIndex + 1, 0, ...nested);
+          typeNode(nodeIndex + 1);
+        }
+      }
+
+      typeChild();
     }
   }
 
-  typeNext();
+  typeNode();
 }
+
+
 
 window.onload = () => {
   createInputLine();
@@ -200,29 +256,27 @@ window.onload = () => {
   // getTerminalHeight();
 };
 
-
 function updatetime() {
   const footerspans = document.querySelectorAll("footer span");
   const timespan = footerspans[1];
   const now = new Date();
 
-  const dd = String(now.getDate()).padStart(2, '0');
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, "0");
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
   const yyyy = now.getFullYear();
 
   let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
 
   hours = hours % 12;
   hours = hours ? hours : 12;
-  hours = String(hours).padStart(2, '0');
+  hours = String(hours).padStart(2, "0");
 
   timespan.textContent = `${dd}/${mm}/${yyyy}, ${hours}:${minutes}:${seconds} ${ampm}`;
 }
 setInterval(updatetime, 1000);
-
 
 // to get height of the terminal wrapper
 // function getTerminalHeight() {
@@ -240,7 +294,47 @@ setInterval(updatetime, 1000);
 // })
 
 
+// suggest related word in the command
+const validCommands = Object.keys(commands);
 
+function getClosestCommand(input) {
+  let closest = "";
+  let minDistance = Infinity;
 
+  for (let cmd of validCommands) {
+    const dist = levenshteinDistance(input, cmd);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closest = cmd;
+    }
+  }
 
+  return minDistance <= 2 ? closest : null; // Only suggest if it's a close match
+}
 
+function levenshteinDistance(a, b) {
+  const matrix = [];
+
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // deletion
+        );
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
+}
